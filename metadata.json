@@ -1,0 +1,7 @@
+{
+  "name": "Copy of HelloAgain! Reconnect",
+  "description": "A beautiful multi-step onboarding application designed to help users reconnect with old friends through identity and affiliation sharing.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
