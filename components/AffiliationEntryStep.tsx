@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { Affiliation, AffiliationType } from '../types';
+import PlacesAutocomplete from './PlacesAutocomplete';
 
 interface AffiliationEntryStepProps {
   onAdd: (affiliation: Affiliation) => void;
@@ -64,17 +65,16 @@ const AffiliationEntryStep: React.FC<AffiliationEntryStepProps> = ({ onAdd }) =>
 
         <div className="flex flex-col gap-2">
           <label className="text-sm font-bold text-stone-dark dark:text-white">What was it called?</label>
-          <div className="relative group">
-            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400 group-focus-within:text-primary transition-colors">
-              <span className="material-symbols-outlined">search</span>
-            </div>
-            <input
-              className="w-full rounded-xl border border-stone-light dark:border-stone-700 bg-stone-100 dark:bg-surface-dark p-4 pl-12 text-base font-medium text-stone-dark dark:text-white placeholder:text-gray-400 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. Lincoln High School"
-            />
-          </div>
+          <PlacesAutocomplete
+            value={name}
+            onChange={setName}
+            placeholder="e.g. Lincoln High School"
+            types={
+              type === AffiliationType.SCHOOL || type === AffiliationType.UNIVERSITY
+                ? ['university', 'school']
+                : ['establishment']
+            }
+          />
         </div>
 
         <div className="flex flex-col gap-2">

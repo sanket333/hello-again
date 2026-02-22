@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { UserProfile } from '../types';
 
 interface PersonalTouchStepProps {
@@ -13,6 +13,7 @@ interface PersonalTouchStepProps {
 
 const PersonalTouchStep: React.FC<PersonalTouchStepProps> = ({ bio, interests, avatar, onUpdate, onNext }) => {
   const [newInterest, setNewInterest] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const addInterest = () => {
     if (newInterest.trim() && !interests.includes(newInterest.trim())) {
@@ -25,9 +26,20 @@ const PersonalTouchStep: React.FC<PersonalTouchStepProps> = ({ bio, interests, a
     onUpdate({ interests: interests.filter((i) => i !== tag) });
   };
 
-  const handleAvatarChange = () => {
-    const newAvatar = `https://picsum.photos/seed/${Math.random()}/400/400`;
-    onUpdate({ avatar: newAvatar });
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      onUpdate({ avatar: reader.result as string });
+    };
+    reader.readAsDataURL(file);
+    // Reset so the same file can be re-selected
+    e.target.value = '';
   };
 
   return (
@@ -42,14 +54,25 @@ const PersonalTouchStep: React.FC<PersonalTouchStepProps> = ({ bio, interests, a
       </div>
 
       <div className="flex justify-center mb-8">
-        <div className="relative group cursor-pointer" onClick={handleAvatarChange}>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={handleFileChange}
+        />
+        <div className="relative group cursor-pointer" onClick={handleAvatarClick}>
           <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white dark:border-surface-dark shadow-lg bg-gray-100 dark:bg-gray-800 relative">
             <img src={avatar} alt="User Avatar" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
               <span className="material-symbols-outlined text-white">edit</span>
             </div>
           </div>
-          <button className="absolute bottom-1 right-1 bg-primary text-white p-2 rounded-full shadow-md hover:bg-primary-dark transition-colors border-2 border-white dark:border-background-dark flex items-center justify-center">
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); handleAvatarClick(); }}
+            className="absolute bottom-1 right-1 bg-primary text-white p-2 rounded-full shadow-md hover:bg-primary-dark transition-colors border-2 border-white dark:border-background-dark flex items-center justify-center"
+          >
             <span className="material-symbols-outlined text-[18px]">photo_camera</span>
           </button>
         </div>

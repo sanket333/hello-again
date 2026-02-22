@@ -30,6 +30,7 @@ export interface UserProfile {
   bio: string;
   interests: string[];
   avatar: string;
+  dob: string;
   affiliations: Affiliation[];
 }
 
